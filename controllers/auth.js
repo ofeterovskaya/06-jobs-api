@@ -4,7 +4,7 @@ const {BadRequestError, UnauthenticatedError}=require('../errors');
 
 //to register a new user
 const register = async (req, res) => {
-    const user = await User.create({req.body});
+    const user = await User.create(req.body);
 
     // Create a JWT for the new user
     const token = user.createJWT();   

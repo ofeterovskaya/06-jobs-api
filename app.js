@@ -7,6 +7,10 @@ const cors = require('cors');
 const xss = require('xss-clean');
 const rateLimiter = require('express-rate-limit');
 
+// app.get('/', (req, res) => {
+//   res.send('jobs api')
+// })
+
 const express = require('express');
 const app = express();
 
@@ -35,6 +39,9 @@ app.use(xss());
 
 
 // routes
+app.get('/', (req, res) => {
+  res.send(' Home page ');
+});
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 

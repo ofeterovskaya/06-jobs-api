@@ -1,12 +1,23 @@
+import { showJobs, handleJobs } from "./jobs.js";
+import { showLoginRegister, handleLoginRegister } from "./loginRegister.js";
+import { handleLogin } from "./login.js";
+import { handleAddEdit } from "./addEdit.js";
+import { handleRegister } from "./register.js";
+
 let activeDiv = null;
+export let message = null;
+
 export const setDiv = (newDiv) => {
-  if (newDiv != activeDiv) {
-    if (activeDiv) {
-      activeDiv.style.display = "none";
-    }
-    newDiv.style.display = "block";
-    activeDiv = newDiv;
+  if (newDiv === activeDiv) {
+    return;
   }
+
+  if (activeDiv) {
+    activeDiv.style.display = "none";
+  }
+
+  newDiv.style.display = "block";
+  activeDiv = newDiv;
 };
 
 export let inputEnabled = true;
@@ -23,14 +34,6 @@ export const setToken = (value) => {
     localStorage.removeItem("token");
   }
 };
-
-export let message = null;
-
-import { showJobs, handleJobs } from "./jobs.js";
-import { showLoginRegister, handleLoginRegister } from "./loginRegister.js";
-import { handleLogin } from "./login.js";
-import { handleAddEdit } from "./addEdit.js";
-import { handleRegister } from "./register.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   token = localStorage.getItem("token");

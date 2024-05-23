@@ -8,23 +8,25 @@ const status = document.getElementById("status");
 const addingJob = document.getElementById("adding-job");
 
 export const handleAddEdit = () => {
-  addEditDiv.addEventListener("click", async (e) => {
-    if ((!inputEnabled && e.target.nodeName !== "BUTTON") || e.target !== addingJob) {
+  const form = document.querySelector("#formSubmit");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
       // this return will prevent the code below from running!
-      return;
-    }
+      if (!inputEnabled) {
+        return;
+      }
     
     // now the code below this line is no longer wrapped in a nested if/else!
     enableInput(false);
 
   let method = "POST";
   let url = "/api/v1/jobs";
-
-    if (addingJob.textContent === "update") {
-      method = "PATCH";
-      url = `/api/v1/jobs/${addEditDiv.dataset.id}`;
-    }
-
+    
+  if (addingJob.dataset.action === "update") {
+    method = "PATCH";
+    url = `/api/v1/jobs/${addEditDiv.dataset.id}`;
+  }
     try {
       const response = await fetch(url, {
         method: method,
@@ -38,7 +40,6 @@ export const handleAddEdit = () => {
           status: status.value,
         }),
       });
-
       if (!response.ok) {
         // grab error from server and throw it!
         const { error } = await response.json();
@@ -56,7 +57,6 @@ export const handleAddEdit = () => {
         status.value = "pending";
       }
 
-     
       showJobs();
     } catch (err) {
       console.error(err);

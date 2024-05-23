@@ -1,11 +1,6 @@
 import { enableInput, inputEnabled, message, setDiv, token } from "./index.js";
 import { showJobs } from "./jobs.js";
 
-// let addEditDiv = null;
-// let company = null;
-// let position = null;
-// let status = null;
-// let addingJob = null;
 const addEditDiv = document.getElementById("edit-job");
 const company = document.getElementById("company");
 const position = document.getElementById("position");
@@ -44,32 +39,33 @@ export const handleAddEdit = () => {
         }),
       });
 
-      const data = await response.json();
-        if (response.status === 200 || response.status === 201) {
-          if (response.status === 200) {
-        // a 200 is expected for a successful update
-            message.textContent = "The job entry was updated.";
-          } else {
-        // a 201 is expected for a successful create
-              message.textContent = "The job entry was created.";
-          }
+      if (!response.ok) {
+        // grab error from server and throw it!
+        const { error } = await response.json();
+        throw new Error(error);
+      }
 
-      company.value = "";
-      position.value = "";
-      status.value = "pending";
+      message.textContent = `The job entry was ${addingJob.dataset.action === "update" ? "updated" : "created"}`;
 
+      const addEditForm = document.querySelector("#add-edit-form");
+      if (addEditForm) {
+        addEditForm.reset();
+      } else {
+        company.value = "";
+        position.value = "";
+        status.value = "pending";
+      }
+
+     
       showJobs();
-        } else {
-            message.textContent = data.msg;
-        }
-        } catch (err) {
-          console.log(err);
-          message.textContent = "A communication error occurred.";
-        }
+    } catch (err) {
+      console.error(err);
+      //catch and use the server response error to communicate to the user what went wrong!!!
+      message.textContent = err?.message || "A communication error occurred.";
+    }
 
-        enableInput(true);
-    
-    });
+    enableInput(true);
+  });
 };
 
 export const showAddEdit = async (jobId) => {
@@ -94,20 +90,20 @@ export const showAddEdit = async (jobId) => {
       });
 
       const data = await response.json();
-      if (response.status === 200) {
-        company.value = data.job.company;
-        position.value = data.job.position;
-        status.value = data.job.status;
-        addingJob.textContent = "update";
-        message.textContent = "";
-        addEditDiv.dataset.id = jobId;
+        if (response.ok) {
+          company.value = data.job.company;
+          position.value = data.job.position;
+          status.value = data.job.status;
+          addingJob.textContent = "update";
+          message.textContent = "";
+          addEditDiv.dataset.id = jobId;
 
-        setDiv(addEditDiv);
-      } else {
+          setDiv(addEditDiv);
+        } else {
         // might happen if the list has been updated since last display
         message.textContent = "The jobs entry was not found";
         showJobs();
-      }
+        }
     } catch (err) {
       console.log(err);
       message.textContent = "A communications error has occurred.";
@@ -139,7 +135,7 @@ export const showDelete = async (jobId) => {
     }
   } catch (err) {
     console.log(err);
-    message.textContent = "A communications error has occurred.";
+    message.textContent = err.message || "A communications error has occurred.";
     showJobs();
   }
   enableInput(true);

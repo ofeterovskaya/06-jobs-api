@@ -13,7 +13,7 @@ const status = document.getElementById("status");
 const addingJob = document.getElementById("adding-job");
 
 export const handleAddEdit = () => {
-  addEditDiv.addEventListener("click", async function(e) {
+  addEditDiv.addEventListener("click", async (e) => {
     if ((!inputEnabled && e.target.nodeName !== "BUTTON") || e.target !== addingJob) {
       // this return will prevent the code below from running!
       return;

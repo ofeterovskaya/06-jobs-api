@@ -7,23 +7,24 @@ const position = document.getElementById("position");
 const status = document.getElementById("status");
 const addingJob = document.getElementById("adding-job");
 
+const form = document.querySelector("#addEditJobForm");
+
 export const handleAddEdit = () => {
-  const form = document.querySelector("#formSubmit");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-      // this return will prevent the code below from running!
-      if (!inputEnabled) {
-        return;
-      }
+    // this return will prevent the code below from running!
+    if (!inputEnabled) {
+      return;
+    }
     
     // now the code below this line is no longer wrapped in a nested if/else!
     enableInput(false);
 
   let method = "POST";
   let url = "/api/v1/jobs";
-    
-  if (addingJob.dataset.action === "update") {
+  console.log(addingJob.dataset);
+  if (addingJob.textContent === "update") {
     method = "PATCH";
     url = `/api/v1/jobs/${addEditDiv.dataset.id}`;
   }

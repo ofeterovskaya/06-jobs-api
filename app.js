@@ -1,3 +1,6 @@
+const express = require('express');
+const app = express();
+
 require('dotenv').config();
 require('express-async-errors');
 
@@ -10,9 +13,6 @@ const rateLimiter = require('express-rate-limit');
 // app.get('/', (req, res) => {
 //   res.send('jobs api')
 // })
-
-const express = require('express');
-const app = express();
 
 //connect to db
 const connectDB = require('./db/connect');
@@ -39,9 +39,14 @@ app.use(xss());
 
 
 // routes
-app.get('/', (req, res) => {
-  res.send(' Home page ');
-});
+// app.get('/', (req, res) => {
+//   res.send(' Home page ');
+// });
+
+// Serve static files before your routes
+app.use(express.static("public"));
+
+// routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 

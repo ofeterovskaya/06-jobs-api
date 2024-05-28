@@ -24,7 +24,7 @@ export const handleAddEdit = () => {
   let method = "POST";
   let url = "/api/v1/jobs";
   console.log(addingJob.dataset);
-  if (addingJob.textContent === "update") {
+  if (addingJob.dataset.action === "update") {
     method = "PATCH";
     url = `/api/v1/jobs/${addEditDiv.dataset.id}`;
   }
@@ -74,7 +74,7 @@ export const showAddEdit = async (jobId) => {
     company.value = "";
     position.value = "";
     status.value = "pending";
-    addingJob.textContent = "add";
+    addingJob.dataset.action = "add";
     message.textContent = "";
 
     setDiv(addEditDiv);
@@ -95,7 +95,7 @@ export const showAddEdit = async (jobId) => {
           company.value = data.job.company;
           position.value = data.job.position;
           status.value = data.job.status;
-          addingJob.textContent = "update";
+          addingJob.dataset.action = "update";
           message.textContent = "";
           addEditDiv.dataset.id = jobId;
 
@@ -107,8 +107,10 @@ export const showAddEdit = async (jobId) => {
         }
     } catch (err) {
       console.log(err);
-      message.textContent = "A communications error has occurred.";
-      showJobs();
+      // Check if the error response from the server exists and has a message
+      message.textContent = err.response && err.response.data && err.response.data.message 
+        ? err.response.data.message // If server error message exists, display it
+        : "A communications error has occurred."; // Else, display a generic error message
     }
 
     enableInput(true);
@@ -126,14 +128,13 @@ export const showDelete = async (jobId) => {
       },
     });
     
-    if (response.status === 200) {
+    if (response.ok) {
       message.textContent = "The job entry was successfully deleted.";
-      showJobs();
     } else {
       // might happen if the list has been updated since last display
       message.textContent = "The jobs entry was not found";
-      showJobs();
     }
+    showJobs();
   } catch (err) {
     console.log(err);
     message.textContent = err.message || "A communications error has occurred.";
